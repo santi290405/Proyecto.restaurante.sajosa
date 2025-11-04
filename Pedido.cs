@@ -70,18 +70,20 @@ public class Pedido
     }
 
     private void CalcularTotal()
-    {
-        total = 0;
-        
-        if (platos.Cabeza == null) return;
+{
+    total = 0;
 
-        Nodo<PlatoPedido> actual = platos.Cabeza;
-        while (actual != null)
-        {
-            total += actual.Valor.Subtotal;
-            actual = actual.Siguiente;
-        }
+    if (platos.Cabeza == null) return;
+
+    Nodo<PlatoPedido> actual = platos.Cabeza;
+    while (actual != null)
+    {
+        PlatoPedido platoPedido = actual.Valor;
+        decimal subtotal = platoPedido.Cantidad * platoPedido.PrecioUnitario;
+        total += subtotal;
+        actual = actual.Siguiente;
     }
+}
 
     public void Despachar()
     {
