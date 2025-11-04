@@ -141,6 +141,7 @@ public Pedido? ObtenerYRemoverUltimoPedido()
         }
         Console.WriteLine(" Historial de servicio limpiado completamente");
     }
+    
 
     public void BuscarPedidosPorCliente(string cedulaCliente)
     {
