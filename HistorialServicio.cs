@@ -61,7 +61,7 @@ public Pedido? ObtenerYRemoverUltimoPedido()
     try
     {
         Pedido pedido = pedidosServidos.Desapilar();
-        Console.WriteLine($"📤 Pedido #{pedido.IdPedido} removido del historial");
+        Console.WriteLine($" Pedido #{pedido.IdPedido} removido del historial");
         return pedido;
     }
     catch (InvalidOperationException ex)
