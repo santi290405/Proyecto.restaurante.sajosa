@@ -1,6 +1,5 @@
 using System;
-using Listas; 
-using Colas;  
+using Listas;
 public class GestorDePedidos
 {
     private Cola<Pedido> pedidosPendientes;
@@ -14,18 +13,18 @@ public class GestorDePedidos
         contadorPedidos = 1;
     }
 
-  
+    
     public void CrearPedido(string cedulaCliente, ListaEnlazada<PlatoPedido> platos)
     {
         if (string.IsNullOrWhiteSpace(cedulaCliente))
         {
-            Console.WriteLine(" La cédula del cliente no puede estar vacía.");
+            Console.WriteLine("La cédula del cliente no puede estar vacía.");
             return;
         }
 
         if (platos == null || platos.Cabeza == null)
         {
-            Console.WriteLine(" El pedido debe contener al menos un plato.");
+            Console.WriteLine("El pedido debe contener al menos un plato.");
             return;
         }
 
@@ -39,10 +38,8 @@ public class GestorDePedidos
         }
 
         pedidosPendientes.Encolar(nuevoPedido);
-        Console.WriteLine($"edido #{nuevoPedido.IdPedido} creado y agregado a la cola de pendientes.");
+        Console.WriteLine($"Pedido #{nuevoPedido.IdPedido} creado y agregado a la cola de pendientes.");
     }
-
-  
     public void DespacharPedido()
     {
         if (pedidosPendientes.EstaVacia())
@@ -58,21 +55,20 @@ public class GestorDePedidos
         Console.WriteLine($"Pedido #{pedido.IdPedido} despachado correctamente.");
     }
 
-    
     public void VerSiguientePedido()
     {
         if (pedidosPendientes.EstaVacia())
         {
-            Console.WriteLine(" No hay pedidos en espera.");
+            Console.WriteLine("No hay pedidos en espera.");
             return;
         }
 
         Pedido siguiente = pedidosPendientes.VerFrente();
-        Console.WriteLine(" Siguiente pedido en cola:");
+        Console.WriteLine("Siguiente pedido en cola:");
         Console.WriteLine(siguiente.ToString());
     }
 
-  
+    
     public void MostrarPedidosPendientes()
     {
         Console.WriteLine("\n=== PEDIDOS PENDIENTES ===");
@@ -85,17 +81,18 @@ public class GestorDePedidos
         pedidosPendientes.Mostrar();
     }
 
-
+ 
     public void MostrarPedidosDespachados()
     {
         Console.WriteLine("\n=== PEDIDOS DESPACHADOS ===");
+
         if (pedidosDespachados.Cabeza == null)
         {
             Console.WriteLine("No hay pedidos despachados aún.");
             return;
         }
 
-        pedidosDespachados.Mostrar();
+        pedidosDespachados.Imprimir();
     }
 
     public decimal CalcularGananciasDelDia()
@@ -107,10 +104,12 @@ public class GestorDePedidos
         while (actual != null)
         {
             Pedido pedido = actual.Valor;
+
             if (pedido.FechaHora.Date == hoy && pedido.Estado == "DESPACHADO")
             {
                 total += pedido.Total;
             }
+
             actual = actual.Siguiente;
         }
 

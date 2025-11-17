@@ -1,6 +1,5 @@
-using Listas;
 using System;
-
+namespace Listas;
 public class Pedido
 {
     private int idPedido;
@@ -115,7 +114,7 @@ public class Pedido
         while (actual != null)
         {
             PlatoPedido platoPedido = actual.Valor;
-            Console.WriteLine($"{contador}. {platoPedido.CodigoPlato} - Cantidad: {platoPedido.Cantidad} - Subtotal: ${platoPedido.Subtotal}");
+            Console.WriteLine($"{contador}. {platoPedido.CodigoPlato} - Cantidad: {platoPedido.Cantidad} - Subtotal: ${platoPedido.CalcularSubtotal}");
             actual = actual.Siguiente;
             contador++;
         }

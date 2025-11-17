@@ -1,6 +1,5 @@
 using System;
-using Listas;
-
+namespace Listas;
 public class HistorialServicio
 {
     private Pila<Pedido> pedidosServidos;
@@ -97,7 +96,7 @@ public Pedido? ObtenerYRemoverUltimoPedido()
                 while (actual != null)
                 {
                     PlatoPedido platoPedido = actual.Valor;
-                    Console.WriteLine($"      • {platoPedido.CodigoPlato} x{platoPedido.Cantidad} - ${platoPedido.Subtotal}");
+                    Console.WriteLine($"      • {platoPedido.CodigoPlato} x{platoPedido.Cantidad} - ${platoPedido.CalcularSubtotal}");
                     actual = actual.Siguiente;
                 }
             }

@@ -1,3 +1,6 @@
+using System;
+using Listas;
+
 public class GestorMenu
 {
     private ListaEnlazada<Plato> platos;
@@ -9,24 +12,57 @@ public class GestorMenu
 
     public void AgregarPlato(Plato p)
     {
-        if (platos.Buscar(x => x.Codigo == p.Codigo) != null)
+        if (BuscarPlato(p.Codigo) != null)
             throw new Exception("Ya existe un plato con ese código.");
-        platos.Insertar(p);
+
+        platos.Agregar(p);
     }
 
-    public void EliminarPlato(string codigo)
+    public bool EliminarPlato(string codigo)
     {
-        platos.Eliminar(p => p.Codigo == codigo);
+        Nodo<Plato> actual = platos.Cabeza;
+        int indice = 0;
+
+        while (actual != null)
+        {
+            if (actual.Valor.Codigo == codigo)
+            {
+                platos.EliminarPosicion(indice);
+                return true;
+            }
+            actual = actual.Siguiente;
+            indice++;
+        }
+
+        return false;
     }
 
     public Plato BuscarPlato(string codigo)
     {
-        return platos.Buscar(p => p.Codigo == codigo);
+        Nodo<Plato> actual = platos.Cabeza;
+
+        while (actual != null)
+        {
+            if (actual.Valor.Codigo == codigo)
+                return actual.Valor;
+
+            actual = actual.Siguiente;
+        }
+
+        return null;
     }
 
     public void ListarPlatos()
     {
         Console.WriteLine("\n--- MENÚ DEL RESTAURANTE ---");
-        platos.Recorrer(p => Console.WriteLine($"{p.Codigo} - {p.Nombre} - ${p.Precio}"));
+
+        Nodo<Plato> actual = platos.Cabeza;
+
+        while (actual != null)
+        {
+            Plato p = actual.Valor;
+            Console.WriteLine($"{p.Codigo} - {p.Nombre} - ${p.Precio}");
+            actual = actual.Siguiente;
+        }
     }
 }

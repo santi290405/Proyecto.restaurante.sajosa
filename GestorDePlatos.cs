@@ -1,3 +1,6 @@
+using System;
+using Listas; 
+
 public class GestorDePlatos
 {
     private ListaEnlazada<Plato> platos;
@@ -9,42 +12,72 @@ public class GestorDePlatos
 
     public void AgregarPlato(string codigo, string nombre, string descripcion, decimal precio)
     {
-        
         if (BuscarPlato(codigo) != null)
-            throw new InvalidOperationException($"Ya existe un plato con el código {codigo}.");
+        {
+            Console.WriteLine($"Ya existe un plato con el código {codigo}.");
+            return;
+        }
 
         Plato nuevo = new Plato(codigo, nombre, descripcion, precio);
-        platos.Agregar(nuevo);
-        Console.WriteLine($"✅ Plato '{nombre}' agregado correctamente.");
+        platos.Agregar(nuevo);  
+        Console.WriteLine($"Plato '{nombre}' agregado correctamente.");
     }
 
     public Plato BuscarPlato(string codigo)
     {
-        return platos.Buscar(p => p.Codigo.Equals(codigo, StringComparison.OrdinalIgnoreCase));
-    }
+        Nodo<Plato> actual = platos.Cabeza;
 
-    public bool EliminarPlato(string codigo)
+        while (actual != null)
+        {
+            if (actual.Valor.Codigo.Equals(codigo, StringComparison.OrdinalIgnoreCase))
+                return actual.Valor;
+
+            actual = actual.Siguiente;
+        }
+
+        return null;
+    }
+        public bool EliminarPlato(string codigo)
     {
-        bool eliminado = platos.Eliminar(p => p.Codigo.Equals(codigo, StringComparison.OrdinalIgnoreCase));
-        if (eliminado)
-            Console.WriteLine($"🗑️ Plato con código {codigo} eliminado correctamente.");
-        else
-            Console.WriteLine($"⚠️ No se encontró ningún plato con código {codigo}.");
-        return eliminado;
+        Nodo<Plato> actual = platos.Cabeza;
+        int index = 0;
+
+        while (actual != null)
+        {
+            if (actual.Valor.Codigo.Equals(codigo, StringComparison.OrdinalIgnoreCase))
+            {
+                platos.EliminarPosicion(index);
+                Console.WriteLine($"Plato con código {codigo} eliminado.");
+                return true;
+            }
+
+            actual = actual.Siguiente;
+            index++;
+        }
+
+        Console.WriteLine($"No se encontró el plato con código {codigo}.");
+        return false;
     }
 
     public void ListarPlatos()
     {
-        Console.WriteLine("🍽️ Lista de platos del menú:\n");
-        platos.Mostrar();
-    }
+        if (platos.Cabeza == null)
+        {
+            Console.WriteLine("No hay platos registrados.");
+            return;
+        }
 
+        Console.WriteLine("Lista de platos del menú:");
+        platos.Imprimir();
+        Console.WriteLine();
+    }
     public bool EditarPlato(string codigo, string nuevoNombre, string nuevaDescripcion, decimal nuevoPrecio)
     {
         Plato plato = BuscarPlato(codigo);
+
         if (plato == null)
         {
-            Console.WriteLine($"⚠️ No se encontró el plato con código {codigo}.");
+            Console.WriteLine($"No se encontró el plato con código {codigo}.");
             return false;
         }
 
@@ -57,7 +90,7 @@ public class GestorDePlatos
         if (nuevoPrecio > 0)
             plato.Precio = nuevoPrecio;
 
-        Console.WriteLine($"✏️ Plato con código {codigo} actualizado correctamente.");
+        Console.WriteLine($"Plato con código {codigo} actualizado.");
         return true;
     }
 

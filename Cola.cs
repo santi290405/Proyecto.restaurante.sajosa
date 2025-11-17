@@ -1,3 +1,4 @@
+namespace Listas;
 public class Cola<T>
 {
     private Nodo<T> frente;
@@ -38,7 +39,7 @@ public class Cola<T>
         if (EstaVacia())
             throw new InvalidOperationException("No se puede desencolar: la cola está vacía.");
 
-        T dato = frente.Dato;
+        T dato = frente.Valor;
         frente = frente.Siguiente;
 
         if (frente == null)
@@ -52,7 +53,7 @@ public class Cola<T>
         if (EstaVacia())
             throw new InvalidOperationException("La cola está vacía.");
 
-        return frente.Dato;
+        return frente.Valor;
     }
 
     
@@ -67,7 +68,7 @@ public class Cola<T>
         Nodo<T> actual = frente;
         while (actual != null)
         {
-            Console.WriteLine(actual.Dato);
+            Console.WriteLine(actual.Valor);
             actual = actual.Siguiente;
         }
     }

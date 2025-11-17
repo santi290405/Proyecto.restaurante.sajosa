@@ -1,3 +1,6 @@
+using System;
+using Listas;
+
 public class GestorClientes
 {
     private ListaEnlazada<Cliente> clientes;
@@ -9,24 +12,60 @@ public class GestorClientes
 
     public void AgregarCliente(Cliente c)
     {
-        if (clientes.Buscar(x => x.Cedula == c.Cedula) != null)
+        // Verificar si ya existe la cédula
+        if (BuscarCliente(c.Cedula) != null)
             throw new Exception("Ya existe un cliente con esa cédula.");
-        clientes.Insertar(c);
+
+        clientes.Agregar(c);
     }
 
     public Cliente BuscarCliente(string cedula)
     {
-        return clientes.Buscar(c => c.Cedula == cedula);
+        Nodo<Cliente> actual = clientes.Cabeza;
+
+        while (actual != null)
+        {
+            if (actual.Valor.Cedula == cedula)
+                return actual.Valor;
+
+            actual = actual.Siguiente;
+        }
+
+        return null;
     }
 
-    public void ListarClientes()
+        public void ListarClientes()
     {
         Console.WriteLine("\n--- LISTA DE CLIENTES ---");
-        clientes.Recorrer(c => Console.WriteLine(c));
+
+        Nodo<Cliente> actual = clientes.Cabeza;
+
+        while (actual != null)
+        {
+            Console.WriteLine(actual.Valor);
+            actual = actual.Siguiente;
+        }
     }
 
+ 
     public void EliminarCliente(string cedula)
     {
-        clientes.Eliminar(c => c.Cedula == cedula);
+        Nodo<Cliente> actual = clientes.Cabeza;
+        int posicion = 0;
+
+        while (actual != null)
+        {
+            if (actual.Valor.Cedula == cedula)
+            {
+                clientes.EliminarPosicion(posicion);
+                return;
+            }
+
+            actual = actual.Siguiente;
+            posicion++;
+        }
+
+        Console.WriteLine("Cliente no encontrado.");
     }
 }
+

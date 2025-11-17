@@ -1,3 +1,6 @@
+using System;
+using Listas;
+
 public class GestorRestaurantes
 {
     private ListaEnlazada<Restaurante> restaurantes;
@@ -11,8 +14,6 @@ public class GestorRestaurantes
     {
         if (r == null)
             throw new ArgumentNullException(nameof(r));
-
-   
         if (string.IsNullOrWhiteSpace(r.Nit))
             throw new ArgumentException("El NIT no puede estar vacío.");
         if (string.IsNullOrWhiteSpace(r.Nombre))
@@ -20,31 +21,42 @@ public class GestorRestaurantes
         if (string.IsNullOrWhiteSpace(r.Celular) || r.Celular.Length != 10)
             throw new ArgumentException("El celular debe tener 10 dígitos.");
 
-    
-        var existente = restaurantes.Buscar(x => x.Nit == r.Nit);
-        if (existente != null)
+        if (BuscarRestaurante(r.Nit) != null)
             throw new InvalidOperationException("Ya existe un restaurante con ese NIT.");
 
-        restaurantes.Insertar(r);
+        restaurantes.Agregar(r);
     }
-
 
     public Restaurante BuscarRestaurante(string nit)
     {
         if (string.IsNullOrWhiteSpace(nit))
             return null;
-        return restaurantes.Buscar(r => r.Nit == nit);
+
+        Nodo<Restaurante> actual = restaurantes.Cabeza;
+        while (actual != null)
+        {
+            if (actual.Valor.Nit == nit)
+                return actual.Valor;
+
+            actual = actual.Siguiente;
+        }
+
+        return null;
     }
 
- 
-    public void ListarRestaurantes(Action<Restaurante> accion)
+    public void ListarRestaurantes()
     {
-        if (accion == null)
-            accion = r => Console.WriteLine(r);
-        restaurantes.Recorrer(accion);
+        Console.WriteLine("\n--- LISTADO DE RESTAURANTES ---");
+
+        Nodo<Restaurante> actual = restaurantes.Cabeza;
+        while (actual != null)
+        {
+            var r = actual.Valor;
+            Console.WriteLine($"{r.Nit} - {r.Nombre} - {r.Celular} - {r.Direccion}");
+            actual = actual.Siguiente;
+        }
     }
 
-    
     public void EditarRestaurante(string nit, string nuevoNombre = null, string nuevoDueno = null,
                                   string nuevoCelular = null, string nuevaDireccion = null)
     {
@@ -69,19 +81,23 @@ public class GestorRestaurantes
             restaurante.Direccion = nuevaDireccion;
     }
 
-        public void EliminarRestaurante(string nit, Func<Restaurante, bool> puedeEliminar = null)
+    public void EliminarRestaurante(string nit)
     {
-        var restaurante = BuscarRestaurante(nit);
-        if (restaurante == null)
-            throw new InvalidOperationException("Restaurante no encontrado.");
+        Nodo<Restaurante> actual = restaurantes.Cabeza;
+        int indice = 0;
 
-        if (puedeEliminar != null)
+        while (actual != null)
         {
-            bool permitido = puedeEliminar(restaurante);
-            if (!permitido)
-                throw new InvalidOperationException("No se puede eliminar el restaurante: la verificación externa lo impide.");
+            if (actual.Valor.Nit == nit)
+            {
+                restaurantes.EliminarPosicion(indice);
+                return;
+            }
+
+            actual = actual.Siguiente;
+            indice++;
         }
 
-        restaurantes.Eliminar(r => r.Nit == nit);
+        throw new InvalidOperationException("Restaurante no encontrado.");
     }
 }

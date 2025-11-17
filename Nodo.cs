@@ -1,5 +1,3 @@
-namespace Listas;
-
 public class Nodo<T> {
     private T valor;
     private Nodo<T> siguiente;
