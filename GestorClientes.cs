@@ -12,7 +12,6 @@ public class GestorClientes
 
     public void AgregarCliente(Cliente c)
     {
-        // Verificar si ya existe la cédula
         if (BuscarCliente(c.Cedula) != null)
             throw new Exception("Ya existe un cliente con esa cédula.");
 
@@ -34,12 +33,11 @@ public class GestorClientes
         return null;
     }
 
-        public void ListarClientes()
+    public void ListarClientes()
     {
         Console.WriteLine("\n--- LISTA DE CLIENTES ---");
 
         Nodo<Cliente> actual = clientes.Cabeza;
-
         while (actual != null)
         {
             Console.WriteLine(actual.Valor);
@@ -47,7 +45,6 @@ public class GestorClientes
         }
     }
 
- 
     public void EliminarCliente(string cedula)
     {
         Nodo<Cliente> actual = clientes.Cabeza;
@@ -67,5 +64,35 @@ public class GestorClientes
 
         Console.WriteLine("Cliente no encontrado.");
     }
+    public bool EditarCliente(
+        string cedula,
+        string nuevoNombre = null,
+        string nuevoCelular = null,
+        string nuevoEmail = null)
+    {
+        Cliente cli = BuscarCliente(cedula);
+        if (cli == null)
+            return false;
+
+        if (!string.IsNullOrWhiteSpace(nuevoNombre))
+            cli.NombreCompleto = nuevoNombre;
+
+        if (!string.IsNullOrWhiteSpace(nuevoCelular))
+        {
+            if (nuevoCelular.Length != 10)
+                throw new Exception("El celular debe tener 10 dígitos.");
+            cli.Celular = nuevoCelular;
+        }
+
+        if (!string.IsNullOrWhiteSpace(nuevoEmail))
+        {
+            if (!nuevoEmail.Contains("@"))
+                throw new Exception("El email no es válido.");
+            cli.Email = nuevoEmail;
+        }
+
+        return true;
+    }
 }
+
 

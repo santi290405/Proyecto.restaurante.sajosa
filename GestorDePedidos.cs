@@ -1,5 +1,6 @@
 using System;
 using Listas;
+
 public class GestorDePedidos
 {
     private Cola<Pedido> pedidosPendientes;
@@ -13,7 +14,7 @@ public class GestorDePedidos
         contadorPedidos = 1;
     }
 
-    
+
     public void CrearPedido(string cedulaCliente, ListaEnlazada<PlatoPedido> platos)
     {
         if (string.IsNullOrWhiteSpace(cedulaCliente))
@@ -40,6 +41,8 @@ public class GestorDePedidos
         pedidosPendientes.Encolar(nuevoPedido);
         Console.WriteLine($"Pedido #{nuevoPedido.IdPedido} creado y agregado a la cola de pendientes.");
     }
+
+   
     public void DespacharPedido()
     {
         if (pedidosPendientes.EstaVacia())
@@ -68,7 +71,6 @@ public class GestorDePedidos
         Console.WriteLine(siguiente.ToString());
     }
 
-    
     public void MostrarPedidosPendientes()
     {
         Console.WriteLine("\n=== PEDIDOS PENDIENTES ===");
@@ -81,7 +83,6 @@ public class GestorDePedidos
         pedidosPendientes.Mostrar();
     }
 
- 
     public void MostrarPedidosDespachados()
     {
         Console.WriteLine("\n=== PEDIDOS DESPACHADOS ===");
@@ -114,5 +115,54 @@ public class GestorDePedidos
         }
 
         return total;
+    }
+
+   
+    public bool EditarPedido(int idPedido, string nuevaCedulaCliente, ListaEnlazada<PlatoPedido> nuevosPlatos)
+    {
+       
+        Cola<Pedido> colaTemporal = new Cola<Pedido>();
+        Pedido pedidoEncontrado = null;
+
+        while (!pedidosPendientes.EstaVacia())
+        {
+            var pedido = pedidosPendientes.Desencolar();
+
+            if (pedido.IdPedido == idPedido)
+                pedidoEncontrado = pedido;
+
+            colaTemporal.Encolar(pedido);
+        }
+
+        while (!colaTemporal.EstaVacia())
+            pedidosPendientes.Encolar(colaTemporal.Desencolar());
+
+      
+        if (pedidoEncontrado == null)
+        {
+            Console.WriteLine("Pedido no encontrado o ya está despachado.");
+            return false;
+        }
+
+      
+        if (!string.IsNullOrWhiteSpace(nuevaCedulaCliente))
+            pedidoEncontrado.CedulaCliente = nuevaCedulaCliente;
+
+        if (nuevosPlatos != null && nuevosPlatos.Cabeza != null)
+        {
+            
+            while (pedidoEncontrado.EliminarPlato(0)) { }
+
+            
+            Nodo<PlatoPedido> actual = nuevosPlatos.Cabeza;
+            while (actual != null)
+            {
+                pedidoEncontrado.AgregarPlato(actual.Valor);
+                actual = actual.Siguiente;
+            }
+        }
+
+        Console.WriteLine($"Pedido #{idPedido} editado correctamente.");
+        return true;
     }
 }

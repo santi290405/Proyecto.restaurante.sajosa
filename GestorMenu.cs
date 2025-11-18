@@ -65,4 +65,26 @@ public class GestorMenu
             actual = actual.Siguiente;
         }
     }
+    public bool EditarPlato(string codigo, string nuevoNombre, string nuevaDescripcion, decimal nuevoPrecio)
+    {
+        Plato plato = BuscarPlato(codigo);
+
+        if (plato == null)
+        {
+            Console.WriteLine($"No se encontró el plato con código {codigo}.");
+            return false;
+        }
+
+        if (!string.IsNullOrWhiteSpace(nuevoNombre))
+            plato.Nombre = nuevoNombre;
+
+        if (!string.IsNullOrWhiteSpace(nuevaDescripcion))
+            plato.Descripcion = nuevaDescripcion;
+
+        if (nuevoPrecio > 0)
+            plato.Precio = nuevoPrecio;
+
+        Console.WriteLine($"Plato con código {codigo} actualizado.");
+        return true;
+    }
 }
