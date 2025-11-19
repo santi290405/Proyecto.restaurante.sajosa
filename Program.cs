@@ -6,7 +6,7 @@ class Program
 {
     static void Main(string[] args)
     {
-        Console.Title = "Gestión de Restaurante - by Santi";
+        Console.Title = "Gestión de Restaurante - by Sajosa";
 
         var gestorRestaurantes = new GestorRestaurantes();
         var gestorClientes = new GestorClientes();

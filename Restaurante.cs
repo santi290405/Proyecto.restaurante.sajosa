@@ -6,10 +6,7 @@ public class Restaurante
     public string Celular { get; set; }
     public string Direccion { get; set; }
     
-    // Gestores asociados para cuando se realicen las clases respectivas y no tener que modificar el codigo 
-    public GestorMenu Menu { get; set; }
     public GestorClientes GestorClientes { get; set; }
-
     public Restaurante(string nit, string nombre, string dueno, string celular, string direccion)
     {
         if (string.IsNullOrWhiteSpace(nit))
@@ -24,8 +21,7 @@ public class Restaurante
         Dueno = dueno;
         Celular = celular;
         Direccion = direccion;
-// Inicialización de los gestores igual para cuando se creen las clases respectivas (es para mas comodidad profe xdddd)
-        Menu = new GestorMenu();
+// Inicialización de los gestores igual para cuando se creen las clases respectivas (es para mas comodidad profe xdddd
         GestorClientes = new GestorClientes();
     }
 
