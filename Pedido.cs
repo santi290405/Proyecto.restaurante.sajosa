@@ -4,15 +4,17 @@ public class Pedido
 {
     private int idPedido;
     private string cedulaCliente;
+    private string nitRestaurante;
     private ListaEnlazada<PlatoPedido> platos;
     private decimal total;
     private DateTime fechaHora;
     private string estado;
 
-    public Pedido(int idPedido, string cedulaCliente)
+    public Pedido(int idPedido, string cedulaCliente, string nitRestaurante)
     {
         this.idPedido = idPedido;
         this.cedulaCliente = cedulaCliente;
+        this.nitRestaurante = nitRestaurante;
         this.platos = new ListaEnlazada<PlatoPedido>();
         this.total = 0;
         this.fechaHora = DateTime.Now;
@@ -28,6 +30,12 @@ public class Pedido
     { 
         get { return cedulaCliente; } 
         set { cedulaCliente = value; }
+    }
+
+    public string NitRestaurante
+    {
+        get { return nitRestaurante; }
+        set { nitRestaurante = value; }
     }
 
     public ListaEnlazada<PlatoPedido> Platos 

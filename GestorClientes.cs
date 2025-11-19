@@ -45,7 +45,7 @@ public class GestorClientes
         }
     }
 
-    public void EliminarCliente(string cedula)
+    public void EliminarCliente(string cedula, GestorDePedidos gestorPedidos)
     {
         Nodo<Cliente> actual = clientes.Cabeza;
         int posicion = 0;
@@ -54,6 +54,9 @@ public class GestorClientes
         {
             if (actual.Valor.Cedula == cedula)
             {
+                if (gestorPedidos.TienePedidosPendientesDe(cedula))
+                    throw new Exception("No se puede eliminar el cliente porque tiene pedidos pendientes.");
+
                 clientes.EliminarPosicion(posicion);
                 return;
             }
@@ -66,9 +69,9 @@ public class GestorClientes
     }
     public bool EditarCliente(
         string cedula,
-        string nuevoNombre = null,
-        string nuevoCelular = null,
-        string nuevoEmail = null)
+        string? nuevoNombre = null,
+        string? nuevoCelular = null,
+        string? nuevoEmail = null)
     {
         Cliente cli = BuscarCliente(cedula);
         if (cli == null)

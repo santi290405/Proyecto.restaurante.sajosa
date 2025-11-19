@@ -24,6 +24,7 @@ class Program
             Console.WriteLine("2. Gestión de Clientes");
             Console.WriteLine("3. Gestión de Platos");
             Console.WriteLine("4. Gestión de Pedidos");
+            Console.WriteLine("5. Gestión de Menú de un Restaurante"); 
             Console.WriteLine("0. Salir");
 
             opcion = LeerEntero("\nSeleccione una opción: ");
@@ -35,15 +36,17 @@ class Program
                     MenuRestaurantes(gestorRestaurantes);
                     break;
                 case 2:
-                    MenuClientes(gestorClientes);
+                    MenuClientes(gestorClientes, gestorPedidos);
                     break;
                 case 3:
-                    MenuPlatos(gestorPlatos);
+                    MenuPlatos(gestorPlatos, gestorPedidos);
                     break;
                 case 4:
-                    MenuPedidos(gestorPedidos, gestorClientes, gestorPlatos);
+                    MenuPedidos(gestorPedidos, gestorClientes, gestorPlatos, gestorRestaurantes);
                     break;
-
+                case 5:
+                    GestionarMenuRestaurante(gestorRestaurantes); 
+                    break;
                 case 0:
                     Mensaje("Saliendo del sistema...", ConsoleColor.Cyan);
                     break;
@@ -55,6 +58,101 @@ class Program
         } while (opcion != 0);
     }
 
+static void GestionarMenuRestaurante(GestorRestaurantes gestorRestaurantes)
+{
+    Console.Clear();
+    Titulo("GESTIÓN DEL MENÚ DE UN RESTAURANTE");
+
+    PrintRestaurantesShort(gestorRestaurantes); 
+    Console.WriteLine();
+
+    string nit = LeerTexto("Ingrese el NIT del restaurante: ");
+    var restaurante = gestorRestaurantes.BuscarRestaurante(nit);
+
+    if (restaurante == null)
+    {
+        Mensaje("No se encontró el restaurante.", ConsoleColor.Red);
+        PromptContinuar();
+        return;
+    }
+
+    MenuInternoMenu(restaurante.Menu); 
+}
+
+static void MenuInternoMenu(GestorMenu menu)
+{
+    int op;
+    do
+    {
+        Console.Clear();
+        Titulo("GESTIÓN DEL MENÚ DEL RESTAURANTE");
+
+        Console.WriteLine("1. Agregar Plato");
+        Console.WriteLine("2. Editar Plato");
+        Console.WriteLine("3. Eliminar Plato");
+        Console.WriteLine("4. Listar Platos");
+        Console.WriteLine("0. Volver");
+        op = LeerEntero("\nSeleccione: ");
+        Console.Clear();
+
+        switch (op)
+        {
+            case 1:
+                string cod = LeerTexto("Código: ");
+                string nom = LeerTexto("Nombre: ");
+                string desc = LeerTexto("Descripción: ");
+                decimal precio = LeerDecimal("Precio: ");
+                try
+                {
+                    menu.AgregarPlato(new Plato(cod, nom, desc, precio));
+                    Mensaje("Plato agregado al menú.", ConsoleColor.Green);
+                }
+                catch (Exception ex)
+                {
+                    Mensaje(ex.Message, ConsoleColor.Red);
+                }
+                PromptContinuar();
+                break;
+
+            case 2:
+                string codEdit = LeerTexto("Código del plato a editar: ");
+                string nNom = LeerOpcional("Nuevo nombre: ");
+                string nDesc = LeerOpcional("Nueva descripción: ");
+                string nPrecioStr = LeerOpcional("Nuevo precio: ");
+                decimal nPrecio = 0;
+                if (!string.IsNullOrWhiteSpace(nPrecioStr))
+                    decimal.TryParse(nPrecioStr, out nPrecio);
+
+                menu.EditarPlato(codEdit, nNom, nDesc, nPrecio);
+                PromptContinuar();
+                break;
+
+            case 3:
+                string codDel = LeerTexto("Código a eliminar: ");
+                if (menu.EliminarPlato(codDel))
+                    Mensaje("Plato eliminado.", ConsoleColor.Green);
+                else
+                    Mensaje("No se encontró el plato.", ConsoleColor.Red);
+                PromptContinuar();
+                break;
+
+            case 4:
+                menu.ListarPlatos();
+                PromptContinuar();
+
+                
+                break;
+
+            case 0:
+                break;
+
+            default:
+                Mensaje("Opción inválida.", ConsoleColor.Red);
+                break;
+        }
+
+    } while (op != 0);
+}
 
     static void MenuRestaurantes(GestorRestaurantes gestor)
     {
@@ -168,7 +266,7 @@ class Program
         } while (op != 0);
     }
 
-    static void MenuClientes(GestorClientes gestor)
+    static void MenuClientes(GestorClientes gestor, GestorDePedidos gestorPedidos)
     {
         int op;
         do
@@ -252,7 +350,7 @@ class Program
                     PrintClientesShort(gestor);
                     Console.WriteLine();
 
-                    gestor.EliminarCliente(LeerTexto("Cédula a eliminar: "));
+                    gestor.EliminarCliente(LeerTexto("Cédula a eliminar: "), gestorPedidos);
                     Mensaje("Cliente eliminado (si existía).", ConsoleColor.Green);
                     PromptContinuar();
                     break;
@@ -267,7 +365,7 @@ class Program
 
         } while (op != 0);
     }
-    static void MenuPlatos(GestorDePlatos gestor)
+    static void MenuPlatos(GestorDePlatos gestor, GestorDePedidos gestorPedidos)
     {
         int op;
         do
@@ -346,7 +444,7 @@ class Program
                     PrintPlatosShort(gestor);
                     Console.WriteLine();
 
-                    gestor.EliminarPlato(LeerTexto("Código a eliminar: "));
+                    gestor.EliminarPlato(LeerTexto("Código a eliminar: "), gestorPedidos);
                     Mensaje("Plato eliminado (si existía).", ConsoleColor.Green);
                     PromptContinuar();
                     break;
@@ -360,9 +458,9 @@ class Program
             }
 
         } while (op != 0);
-    }
-    static void MenuPedidos(GestorDePedidos gestor, GestorClientes clientes, GestorDePlatos platos)
+    }    static void MenuPedidos(GestorDePedidos gestor, GestorClientes clientes, GestorDePlatos platos, GestorRestaurantes gestorRestaurantes)
     {
+        
         int op;
         do
         {
@@ -379,6 +477,7 @@ class Program
             Console.WriteLine("2. Despachar Pedido");
             Console.WriteLine("3. Ver siguiente pedido");
             Console.WriteLine("4. Ganancias del día");
+            Console.WriteLine("5. Mostrar platos servidos");
             Console.WriteLine("0. Volver");
 
             op = LeerEntero("\nSeleccione: ");
@@ -387,39 +486,48 @@ class Program
             switch (op)
             {
                 case 1:
-                    string cedCliente = LeerTexto("Cédula del cliente: ");
-                    var cliente = clientes.BuscarCliente(cedCliente);
+    string cedCliente = LeerTexto("Cédula del cliente: ");
+    var cliente = clientes.BuscarCliente(cedCliente);
 
-                    if (cliente == null)
-                    {
-                        Mensaje("El cliente no existe.", ConsoleColor.Red);
-                        PromptContinuar();
-                        break;
-                    }
+    if (cliente == null)
+    {
+        Mensaje("El cliente no existe.", ConsoleColor.Red);
+        PromptContinuar();
+        break;
+    }
+    string nitRestaurante = LeerTexto("NIT del restaurante para este pedido: ");
+    var restaurante = gestorRestaurantes.BuscarRestaurante(nitRestaurante);
 
-                    ListaEnlazada<PlatoPedido> listaPlatos = new ListaEnlazada<PlatoPedido>();
+    if (restaurante == null)
+    {
+        Mensaje("Restaurante no encontrado.", ConsoleColor.Red);
+        PromptContinuar();
+        break;
+    }
+    ListaEnlazada<PlatoPedido> listaPlatos = new ListaEnlazada<PlatoPedido>();
 
-                    Mensaje("Agregando platos al pedido. Escriba '0' como código para terminar.", ConsoleColor.Yellow);
+    Mensaje("Agregando platos al pedido. Escriba '0' como código para terminar.", ConsoleColor.Yellow);
 
-                    while (true)
-                    {
-                        string codPlato = LeerTexto("Código del plato: ");
-                        if (codPlato == "0") break;
+    while (true)
+    {
+        string codPlato = LeerTexto("Código del plato: ");
+        if (codPlato == "0") break;
 
-                        var plato = platos.BuscarPlato(codPlato);
-                        if (plato == null)
-                        {
-                            Mensaje("Plato no encontrado.", ConsoleColor.Red);
-                            continue;
-                        }
+        var plato = platos.BuscarPlato(codPlato);
+        if (plato == null)
+        {
+            Mensaje("Plato no encontrado.", ConsoleColor.Red);
+            continue;
+        }
 
-                        int cant = LeerEntero("Cantidad: ");
-                        listaPlatos.Agregar(new PlatoPedido(plato.Codigo, cant, plato.Precio));
-                    }
+        int cant = LeerEntero("Cantidad: ");
+        listaPlatos.Agregar(new PlatoPedido(plato.Codigo, cant, plato.Precio));
+    }
+    gestor.CrearPedido(nitRestaurante, cedCliente, listaPlatos);
 
-                    gestor.CrearPedido(cedCliente, listaPlatos);
-                    PromptContinuar();
-                    break;
+    Mensaje("Pedido creado y agregado a la cola del restaurante.", ConsoleColor.Green);
+    PromptContinuar();
+    break;
 
                 case 2:
                     gestor.DespacharPedido();
@@ -435,7 +543,10 @@ class Program
                     Console.WriteLine($"Ganancias de hoy: ${gestor.CalcularGananciasDelDia()}");
                     PromptContinuar();
                     break;
-
+                case 5:
+                    gestor.MostrarPlatosServidos();
+                    PromptContinuar();
+                    break;
                 case 0:
                     break;
 

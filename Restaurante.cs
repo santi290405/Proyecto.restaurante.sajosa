@@ -1,3 +1,4 @@
+namespace Listas; 
 public class Restaurante
 {
     public string Nit { get; set; }
@@ -5,7 +6,8 @@ public class Restaurante
     public string Dueno { get; set; }
     public string Celular { get; set; }
     public string Direccion { get; set; }
-    
+    public Cola<Pedido> PedidosPendientes { get; } = new Cola<Pedido>();
+    public GestorMenu Menu { get; set; }
     public GestorClientes GestorClientes { get; set; }
     public Restaurante(string nit, string nombre, string dueno, string celular, string direccion)
     {
@@ -22,6 +24,7 @@ public class Restaurante
         Celular = celular;
         Direccion = direccion;
 // Inicialización de los gestores igual para cuando se creen las clases respectivas (es para mas comodidad profe xdddd
+        Menu = new GestorMenu();
         GestorClientes = new GestorClientes();
     }
 

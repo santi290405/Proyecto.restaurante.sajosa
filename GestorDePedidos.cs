@@ -5,17 +5,19 @@ public class GestorDePedidos
 {
     private Cola<Pedido> pedidosPendientes;
     private ListaEnlazada<Pedido> pedidosDespachados;
+    private Pila<PlatoPedido> historialPlatosServidos;
     private int contadorPedidos;
 
     public GestorDePedidos()
     {
         pedidosPendientes = new Cola<Pedido>();
         pedidosDespachados = new ListaEnlazada<Pedido>();
+        historialPlatosServidos = new Pila<PlatoPedido>();
         contadorPedidos = 1;
     }
 
 
-    public void CrearPedido(string cedulaCliente, ListaEnlazada<PlatoPedido> platos)
+    public void CrearPedido(string nitRestaurante, string cedulaCliente, ListaEnlazada<PlatoPedido> platos)
     {
         if (string.IsNullOrWhiteSpace(cedulaCliente))
         {
@@ -29,7 +31,7 @@ public class GestorDePedidos
             return;
         }
 
-        Pedido nuevoPedido = new Pedido(contadorPedidos++, cedulaCliente);
+        Pedido nuevoPedido = new Pedido(contadorPedidos++, cedulaCliente, nitRestaurante);
 
         Nodo<PlatoPedido> actual = platos.Cabeza;
         while (actual != null)
@@ -56,6 +58,15 @@ public class GestorDePedidos
         pedidosDespachados.Agregar(pedido);
 
         Console.WriteLine($"Pedido #{pedido.IdPedido} despachado correctamente.");
+
+        Nodo<PlatoPedido> actual = pedido.Platos.Cabeza;
+
+        while (actual != null)
+    {
+    historialPlatosServidos.Apilar(actual.Valor);
+    actual = actual.Siguiente;
+    }
+
     }
 
     public void VerSiguientePedido()
@@ -116,6 +127,21 @@ public class GestorDePedidos
 
         return total;
     }
+    public void MostrarPlatosServidos()
+{
+    Console.WriteLine("=== PLATOS SERVIDOS ===");
+
+    if (historialPlatosServidos.EstaVacia())
+    {
+        Console.WriteLine("No hay platos servidos aún.");
+        return;
+    }
+
+    historialPlatosServidos.MostrarPila(plato =>
+    {
+        Console.WriteLine($"{plato.CodigoPlato} x{plato.Cantidad} - ${plato.PrecioUnitario}");
+    });
+}
 
    
     public bool EditarPedido(int idPedido, string nuevaCedulaCliente, ListaEnlazada<PlatoPedido> nuevosPlatos)
@@ -165,4 +191,57 @@ public class GestorDePedidos
         Console.WriteLine($"Pedido #{idPedido} editado correctamente.");
         return true;
     }
+public bool TienePedidosPendientesDe(string cedulaCliente)
+{
+    Nodo<Pedido>? actual = pedidosPendientes.Frente;
+
+    while (actual != null)
+    {
+        if (actual.Valor.CedulaCliente == cedulaCliente)
+            return true;
+
+        actual = actual.Siguiente;
+    }
+
+    return false;
+}
+
+public bool PlatoEnPedidoPendiente(string codigoPlato)
+{
+    Nodo<Pedido>? actual = pedidosPendientes.Frente;
+
+    while (actual != null)
+    {
+        Nodo<PlatoPedido>? p = actual.Valor.Platos.Cabeza;
+
+        while (p != null)
+        {
+            if (p.Valor.CodigoPlato == codigoPlato)
+                return true;
+
+            p = p.Siguiente;
+        }
+
+        actual = actual.Siguiente;
+    }
+
+    return false;
+}
+
+public bool RestauranteTienePedidosPendientes(string nitRestaurante)
+{
+    Nodo<Pedido>? actual = pedidosPendientes.Frente;
+
+    while (actual != null)
+    {
+        if (actual.Valor.NitRestaurante == nitRestaurante)
+            return true;
+
+        actual = actual.Siguiente;
+    }
+
+    return false;
+}
+
+
 }

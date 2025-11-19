@@ -37,15 +37,18 @@ public class GestorDePlatos
 
         return null;
     }
-        public bool EliminarPlato(string codigo)
+        public bool EliminarPlato(string codigo, GestorDePedidos gestorPedidos)
     {
-        Nodo<Plato> actual = platos.Cabeza;
+        Nodo<Plato>? actual = platos.Cabeza;
         int index = 0;
 
         while (actual != null)
         {
             if (actual.Valor.Codigo.Equals(codigo, StringComparison.OrdinalIgnoreCase))
             {
+                if (gestorPedidos.PlatoEnPedidoPendiente(codigo))
+                    throw new Exception("No se puede eliminar el plato, está en un pedido pendiente.");
+
                 platos.EliminarPosicion(index);
                 Console.WriteLine($"Plato con código {codigo} eliminado.");
                 return true;

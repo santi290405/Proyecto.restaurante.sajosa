@@ -1,8 +1,8 @@
 namespace Listas;
 public class Cola<T>
 {
-    private Nodo<T> frente;
-    private Nodo<T> final;
+    private Nodo<T>? frente;
+    private Nodo<T>? final;
 
     public Cola()
     {
@@ -14,6 +14,12 @@ public class Cola<T>
     public bool EstaVacia()
     {
         return frente == null;
+    }
+
+    // Expose the front node for non-destructive inspection (read-only)
+    public Nodo<T>? Frente
+    {
+        get { return frente; }
     }
 
    
@@ -28,7 +34,7 @@ public class Cola<T>
         }
         else
         {
-            final.Siguiente = nuevo;
+            final!.Siguiente = nuevo;
             final = nuevo;
         }
     }
@@ -39,7 +45,7 @@ public class Cola<T>
         if (EstaVacia())
             throw new InvalidOperationException("No se puede desencolar: la cola está vacía.");
 
-        T dato = frente.Valor;
+        T dato = frente!.Valor;
         frente = frente.Siguiente;
 
         if (frente == null)
@@ -53,7 +59,7 @@ public class Cola<T>
         if (EstaVacia())
             throw new InvalidOperationException("La cola está vacía.");
 
-        return frente.Valor;
+        return frente!.Valor;
     }
 
     
@@ -65,7 +71,7 @@ public class Cola<T>
             return;
         }
 
-        Nodo<T> actual = frente;
+        Nodo<T>? actual = frente;
         while (actual != null)
         {
             Console.WriteLine(actual.Valor);
